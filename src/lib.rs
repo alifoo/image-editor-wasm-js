@@ -1,4 +1,4 @@
-use std::alloc::{alloc, Layout};
+use std::alloc::{Layout, alloc};
 use std::mem;
 use std::slice::from_raw_parts_mut;
 
@@ -44,4 +44,20 @@ extern "C" fn criar_memoria_inicial() {
     }
 
     fatia[0] = 85;
+}
+
+#[unsafe(no_mangle)]
+extern "C" fn filtro_preto_e_branco(ponteiro: *mut u8, comprimento: usize) {
+    let pixels = unsafe { from_raw_parts_mut(ponteiro as *mut u8, comprimento) };
+    let mut i = 0;
+    loop {
+        if i >= comprimento - 1 {
+            break;
+        }
+        let filtro = (pixels[i] / 3) + (pixels[i + 1] / 3) + (pixels[i + 2] / 3);
+        pixels[i] = filtro;
+        pixels[i + 1] = filtro;
+        pixels[i + 2] = filtro;
+        i += 4;
+    }
 }
